@@ -79,6 +79,28 @@ func TestRouter(t *testing.T) {
 	}
 }
 
+func TestRouterWithEncodedPathVarSlash(t *testing.T) {
+	router := New(JwtConfig{})
+
+	routed := false
+	router.Handle("GET", "/user/:name", func(w http.ResponseWriter, r *http.Request, ps Params, jwt Jwt) {
+		routed = true
+		want := Params{Param{"name", "foo/bar"}}
+		if !reflect.DeepEqual(ps, want) {
+			t.Fatalf("wrong wildcard values: want %v, got %v", want, ps)
+		}
+	})
+
+	w := new(mockResponseWriter)
+
+	req, _ := http.NewRequest("GET", "/user/foo%2Fbar", nil)
+	router.ServeHTTP(w, req)
+
+	if !routed {
+		t.Fatal("routing failed")
+	}
+}
+
 type handlerStruct struct {
 	handled *bool
 }

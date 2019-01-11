@@ -34,6 +34,7 @@ func TestJwt(t *testing.T) {
 }
 
 func TestRsaJwt(t *testing.T) {
+	t.SkipNow()
 	token := Jwt{}
 	token.Map = map[string]interface{}{}
 	rsa := "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApIH2UK4yoHkQQyTVWKvcbtNrfa9t7UBFdgLTYCZ47qjVXLGa6XJG+LDEeMjOZqA7irSfuBayV9CX6rJApxibvfF5UnCbV7hCcpu5cJd2ezWWkcvj08ZpLCbYwI6OQzXIAYwZYSwQQW1VnAfqNryO2Mb8g2f++1C+2PuX0DcpKt8Wz1sjjdoNkbDPHL3JtGUhnLHSCh/Qz0crqIQBwymCj/qKaRaQ8U9VX3xasjGalnOA7z2503KaWlpZV5N6h9QH/FqQ3rVyw/4cnOmwYH705Lqyb0RVan90/vJKbVh8YBbW7JGbRrtbW6jfg9YJSsPBPT8eUV90O9aYQNxB+W/30wIDAQAB"

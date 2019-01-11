@@ -17,6 +17,7 @@
 package jwt_http_router
 
 import (
+	"net/url"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -383,7 +384,11 @@ walk: // outer loop for walking the tree
 					i := len(p)
 					p = p[:i+1] // expand slice within preallocated capacity
 					p[i].Key = n.path[1:]
-					p[i].Value = path[:end]
+					var err error
+					p[i].Value, err = url.PathUnescape(path[:end])
+					if err != nil {
+						p[i].Value = path[:end]
+					}
 
 					// we need to go deeper!
 					if end < len(path) {

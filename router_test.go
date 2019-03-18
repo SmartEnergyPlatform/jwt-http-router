@@ -101,6 +101,28 @@ func TestRouterWithEncodedPathVarSlash(t *testing.T) {
 	}
 }
 
+
+func TestRouterWithQuery(t *testing.T) {
+	router := New(JwtConfig{})
+
+	routed := false
+	router.Handle("GET", "/query", func(w http.ResponseWriter, r *http.Request, ps Params, jwt Jwt) {
+		routed = true
+		if r.URL.Query().Get("field") != "value" {
+			t.Fatalf("wrong query parameter value "+r.URL.Query().Get("field"))
+		}
+	})
+
+	w := new(mockResponseWriter)
+
+	req, _ := http.NewRequest("GET", "/query?field=value", nil)
+	router.ServeHTTP(w, req)
+
+	if !routed {
+		t.Fatal("routing failed")
+	}
+}
+
 type handlerStruct struct {
 	handled *bool
 }

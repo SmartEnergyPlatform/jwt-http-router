@@ -17,7 +17,9 @@
 package jwt_http_router
 
 import (
+	"context"
 	"net/http"
+	"time"
 
 	"crypto/x509"
 	"encoding/base64"
@@ -170,17 +172,19 @@ func (this JwtImpersonate) Post(url string, contentType string, body io.Reader) 
 	if err != nil {
 		return nil, err
 	}
+	ctx, _ := context.WithTimeout(context.Background(), 5 * time.Second)
+	req.WithContext(ctx)
 	req.Header.Set("Authorization", string(this))
 	req.Header.Set("Content-Type", contentType)
 
 	resp, err = http.DefaultClient.Do(req)
 
-	if err == nil && resp.StatusCode == 401 {
+	if err == nil && resp.StatusCode >= 300 {
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(resp.Body)
 		resp.Body.Close()
 		log.Println(buf.String())
-		err = errors.New("access denied")
+		err = errors.New(resp.Status)
 	}
 	return
 }
@@ -207,15 +211,17 @@ func (this JwtImpersonate) Get(url string) (resp *http.Response, err error) {
 	if err != nil {
 		return nil, err
 	}
+	ctx, _ := context.WithTimeout(context.Background(), 5 * time.Second)
+	req.WithContext(ctx)
 	req.Header.Set("Authorization", string(this))
 	resp, err = http.DefaultClient.Do(req)
 
-	if err == nil && resp.StatusCode == 401 {
+	if err == nil && resp.StatusCode >= 300 {
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(resp.Body)
 		resp.Body.Close()
 		log.Println(buf.String())
-		err = errors.New("access denied")
+		err = errors.New(resp.Status)
 	}
 	return
 }
